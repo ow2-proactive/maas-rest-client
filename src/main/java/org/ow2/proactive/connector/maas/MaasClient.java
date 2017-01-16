@@ -37,8 +37,6 @@ import java.util.List;
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
 import org.ow2.proactive.connector.maas.data.Machine;
 import org.ow2.proactive.connector.maas.oauth.OauthClientConfig;
-import org.ow2.proactive.connector.maas.oauth.OauthConnectionService;
-import org.ow2.proactive.connector.maas.oauth.OauthConnectionServiceImpl;
 import org.ow2.proactive.connector.maas.rest.RestClient;
 import org.ow2.proactive.connector.maas.rest.RestClientErrorHandler;
 import org.springframework.core.io.ByteArrayResource;
@@ -61,14 +59,27 @@ public class MaasClient {
 
     public MaasClient(String apiUrl, String token, boolean ignoreHttpsCert) {
 
-        OauthConnectionService oauthConnectionService = new OauthConnectionServiceImpl();
-        RestTemplate restTemplate = new OauthClientConfig().restTemplate(token.split(":"), ignoreHttpsCert);
+        if (!checkCredentials(token)) {
+            throw new RemoteConnectFailureException("Unable to parse API key", new Throwable("Wrong API key format"));
+        }
+
+        // Parse API token
+        String[] tokenParts = token.split(":");
+        String consumerKey = tokenParts[0];
+        String accessKey = tokenParts[1];
+        String accessSecret = tokenParts[2];
+        RestTemplate restTemplate = new OauthClientConfig().restTemplate(consumerKey, "", accessKey, accessSecret, ignoreHttpsCert);
         restClient= new RestClient(restTemplate, apiUrl);
 
         // Try to connect or return an error
         if (getMachines() == null) {
-            throw new RemoteConnectFailureException("Authentication failure", new Throwable("Wrong API key"));
+            throw new RemoteConnectFailureException("Remote authentication failure", new Throwable("Wrong API key content"));
         }
+    }
+
+    private boolean checkCredentials(String token) {
+        String[] tokenParts = token.split(":");
+        return tokenParts.length == 3;
     }
 
     public List<Machine> getMachines() {

@@ -16,14 +16,13 @@ public class OauthClientConfig {
 
 	public RestTemplate restTemplate(String[] token, boolean ignoreHttpsCert) {
 
-	    // Bypass self signed HTTPS certificates
+	    // Bypass self signed HTTPS certificate
         if (ignoreHttpsCert) {
             HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier());
             HttpsURLConnection.setDefaultSSLSocketFactory(getSSLSocketFactory());
         }
 
-        return ProtectedResourceClientFactory.create(token[0], "", token[1],token[2]);
-
+        return ProtectedResourceClientFactory.create(consumerKey, consumerSecret, accessKey, accessSecret);
     }
 
 	private SSLSocketFactory getSSLSocketFactory() {
