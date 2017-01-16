@@ -52,7 +52,7 @@ public class Interface {
     @JsonProperty("parents")
     private Object[] parents;
     @JsonProperty("discovered")
-    private String[] discovered;
+    private Discovered[] discovered;
     @JsonProperty("type")
     private String type;
     @JsonProperty("tags")
@@ -71,4 +71,15 @@ public class Interface {
     private String macAddress;
     @JsonProperty("enabled")
     private Boolean enabled;
+
+    @Getter(AccessLevel.PUBLIC)
+    @ToString
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class Discovered {
+        @JsonProperty("ip_address")
+        private String ipAddress;
+        @JsonProperty("subnet")
+        private Subnet subnet;
+    }
 }
