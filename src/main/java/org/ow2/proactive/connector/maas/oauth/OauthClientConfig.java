@@ -14,7 +14,11 @@ import org.springframework.web.client.RestTemplate;
 
 public class OauthClientConfig {
 
-	public RestTemplate restTemplate(String[] token, boolean ignoreHttpsCert) {
+    public RestTemplate restTemplate(String consumerKey, String consumerSecret, String accessKey, String accessSecret) {
+        return restTemplate(consumerKey, consumerSecret, accessKey, accessSecret, false);
+    }
+
+    public RestTemplate restTemplate(String consumerKey, String consumerSecret, String accessKey, String accessSecret, boolean ignoreHttpsCert) {
 
 	    // Bypass self signed HTTPS certificate
         if (ignoreHttpsCert) {
