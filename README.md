@@ -17,7 +17,7 @@ The API key is represented as a single string composed by 3 different tokens (se
  - The access key
  - The access secret
  
- API key = `<consumer_key>:<access_key>:<access_secret>`
+API key = `<consumer_key>:<access_key>:<access_secret>`
 
 Strangely, the consumer secret is not part of the API key and must be left as an empty string.
 As of now (API v2.0), the authentication is performed through the old OAuth 1 mechanism.
