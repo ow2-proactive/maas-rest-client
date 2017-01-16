@@ -54,10 +54,7 @@ public class OauthClientConfig {
         return new javax.net.ssl.HostnameVerifier() {
 
             public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
-                if (hostname.equals("maas-1.activeeon.com")) {
-                    return true;
-                }
-                return false;
+                return true;
             }
         };
     }
