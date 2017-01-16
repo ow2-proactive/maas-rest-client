@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class MaasClient {
 
     public MaasClient(String apiUrl, String token, boolean ignoreHttpsCert) {
 
+        // Check API key format
         if (!checkCredentials(token)) {
             throw new RemoteConnectFailureException("Unable to parse API key", new Throwable("Wrong API key format"));
         }
@@ -71,18 +73,21 @@ public class MaasClient {
         RestTemplate restTemplate = new OauthClientConfig().restTemplate(consumerKey, "", accessKey, accessSecret, ignoreHttpsCert);
         restClient= new RestClient(restTemplate, apiUrl);
 
-        // Try to connect or return an error
-        if (getMachines() == null) {
+        // Try to retrieve maas_name config parameter
+        if (!tryToConnect()) {
             throw new RemoteConnectFailureException("Remote authentication failure", new Throwable("Wrong API key content"));
         }
     }
 
-    private boolean checkCredentials(String token) {
-        String[] tokenParts = token.split(":");
-        return tokenParts.length == 3;
+    public String getMaasConfig(String configName) {
+        return restClient.getRequest(String.class, "/maas/?op=get_config&name=" + configName).getBody();
     }
 
     public List<Machine> getMachines() {
+        ResponseEntity response = restClient.getRequest(Machine[].class, "/machines/");
+        if (RestClientErrorHandler.hasError(response.getStatusCode())) {
+            return null;
+        }
         return Arrays.asList(restClient.getRequest(Machine[].class, "/machines/").getBody());
     }
 
@@ -152,43 +157,51 @@ public class MaasClient {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
 
-        // Mimics the CLI behavior (waiting for an API upgrade)
+        // Mimics the CLI behavior by using base64 encoding (waiting for an API upgrade)
         HttpHeaders partHeaders = new HttpHeaders();
         partHeaders.setContentType(MediaType.TEXT_PLAIN);
         partHeaders.set("Content-Transfer-Encoding", "base64");
         partHeaders.set("MIME-Version", "1.0");
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("enable_ssh", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(Boolean.toString(enableSSH).getBytes()), partHeaders));
-        parts.add("skip_networking", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(Boolean.toString(skipNetworking).getBytes()), partHeaders));
-        parts.add("skip_storage", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(Boolean.toString(skipStorage).getBytes()), partHeaders));
+        parts.add("enable_ssh", new HttpEntity<>(encodeToBase64(enableSSH), partHeaders));
+        parts.add("skip_networking", new HttpEntity<>(encodeToBase64(skipNetworking), partHeaders));
+        parts.add("skip_storage", new HttpEntity<>(encodeToBase64(skipStorage), partHeaders));
 
-        return restClient.postRequestWithArgs(String.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
+        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
     }
 
     public Machine deployMachine(String systemId) {
         return deployMachine(systemId, null, null, null);
     }
 
+    // Missing 'user_data' parameter that provides metadata access from the new deployed machine
     public Machine deployMachine(String systemId, String distroSeries, String hweKernel, String comment) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
-
-        // Mimics the CLI behavior (waiting for an API upgrade)
-        HttpHeaders partHeaders = new HttpHeaders();
-        partHeaders.setContentType(MediaType.TEXT_PLAIN);
-        partHeaders.set("Content-Transfer-Encoding", "base64");
-        partHeaders.set("MIME-Version", "1.0");
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        if (distroSeries != null) {
-            parts.add("distro_series", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(distroSeries.getBytes()), partHeaders));
+        if (distroSeries != null && !distroSeries.isEmpty()) {
+            parts.add("distro_series", distroSeries);
         }
-        if (hweKernel != null) {
-            parts.add("hwe_kernel", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(hweKernel.getBytes()), partHeaders));
+        if (hweKernel != null && !hweKernel.isEmpty()) {
+            parts.add("hwe_kernel", hweKernel);
         }
-        if (comment != null) {
-            parts.add("comment", new HttpEntity<>(Base64.getMimeEncoder().encodeToString(comment.getBytes()), partHeaders));
+        if (comment != null && !comment.isEmpty()) {
+            parts.add("comment", comment);
         }
 
         return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=deploy", parts, args).getBody();
+    }
+
+    private boolean checkCredentials(String token) {
+        String[] tokenParts = token.split(":");
+        return tokenParts.length == 3;
+    }
+
+    private boolean tryToConnect() {
+        return getMaasConfig("maas_name") != null;
+    }
+
+    private String encodeToBase64(Object src) {
+        return Base64.getMimeEncoder().encodeToString(src.toString().getBytes());
     }
 }
