@@ -65,7 +65,6 @@ public class RestClient {
 
         // Add message converters
         //restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
-        //restTemplate.getMessageConverters().add(new AllEncompassingFormHttpMessageConverter());
     }
 
     public <T> ResponseEntity<T> deleteRequestWithArgs(Class<T> valueType, String resourceUrl, HashMap args) {
@@ -83,7 +82,7 @@ public class RestClient {
         try {
             return  restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType));
         } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -93,7 +92,7 @@ public class RestClient {
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType), args);
         } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -102,7 +101,7 @@ public class RestClient {
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType));
         } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -111,7 +110,7 @@ public class RestClient {
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType), args);
         } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
