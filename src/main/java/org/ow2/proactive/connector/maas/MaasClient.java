@@ -59,10 +59,10 @@ public class MaasClient {
 
     private RestClient restClient;
 
-    public MaasClient(String apiUrl, String token) {
+    public MaasClient(String apiUrl, String token, boolean ignoreHttpsCert) {
 
         OauthConnectionService oauthConnectionService = new OauthConnectionServiceImpl();
-        RestTemplate restTemplate = new OauthClientConfig().restTemplate(token.split(":"));
+        RestTemplate restTemplate = new OauthClientConfig().restTemplate(token.split(":"), ignoreHttpsCert);
         restClient= new RestClient(restTemplate, apiUrl);
 
         // Try to connect or return an error

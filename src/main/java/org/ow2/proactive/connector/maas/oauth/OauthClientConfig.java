@@ -14,13 +14,14 @@ import org.springframework.web.client.RestTemplate;
 
 public class OauthClientConfig {
 
-	public RestTemplate restTemplate(String[] token) {
+	public RestTemplate restTemplate(String[] token, boolean ignoreHttpsCert) {
 
 	    // Bypass self signed HTTPS certificates
-        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier());
-        HttpsURLConnection.setDefaultSSLSocketFactory(getSSLSocketFactory());
+        if (ignoreHttpsCert) {
+            HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier());
+            HttpsURLConnection.setDefaultSSLSocketFactory(getSSLSocketFactory());
+        }
 
-        //return ProtectedResourceClientFactory.create("***REMOVED***", "", "***REMOVED***", "***REMOVED***");
         return ProtectedResourceClientFactory.create(token[0], "", token[1],token[2]);
 
     }

@@ -25,11 +25,6 @@
  */
 package org.ow2.proactive.connector.maas;
 
-import java.util.List;
-
-import org.ow2.proactive.connector.maas.data.Machine;
-import org.ow2.proactive.connector.maas.data.powertype.VirshPowerType;
-
 /**
  * @author ActiveEon Team
  * @since 09/01/17
