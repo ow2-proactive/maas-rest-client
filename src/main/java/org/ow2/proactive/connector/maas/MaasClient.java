@@ -99,8 +99,23 @@ public class MaasClient {
 
     public Machine createMachine(Machine.Builder machineBuilder) {
         return restClient.postRequest(Machine.class, "/machines/", machineBuilder.buildAsArgs()).getBody();
-        //return !RestClientErrorHandler.hasError(response.getStatusCode());
-        //return (String)response.getBody();
+    }
+
+    public List<String> releaseMachines(String... systemIds) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.put("machines", Arrays.asList(systemIds));
+        ResponseEntity response = restClient.postRequest(String[].class, "/machines/?op=release", parts);
+        if (RestClientErrorHandler.hasError(response.getStatusCode())) {
+            return null;
+        }
+        return Arrays.asList((String[])response.getBody());
+    }
+
+    public boolean releaseMachineById(String systemId) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.put("machines", Collections.singletonList(systemId));
+        ResponseEntity response = restClient.postRequest(String[].class, "/machines/?op=release", parts);
+        return !RestClientErrorHandler.hasError(response.getStatusCode()) && response.getBody().equals(systemId);
     }
 
     public boolean deleteMachine(String systemId) {
@@ -149,11 +164,23 @@ public class MaasClient {
         return restClient.postRequest(CommissioningScript.class, "/commissioning-scripts/", parts).getBody();
     }
 
-    public String commissionMachine(String systemId) {
+    public Machine commissionMachine(String systemId) {
         return commissionMachine(systemId, true, false, false);
     }
 
-    public String commissionMachine(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
+    public Machine allocateMachineById(String systemId) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("system_id", systemId);
+        return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+    }
+
+    public Machine allocateMachineByHostname(String hostname) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("name", hostname);
+        return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+    }
+
+    public Machine commissionMachine(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
 
@@ -190,6 +217,44 @@ public class MaasClient {
         }
 
         return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=deploy", parts, args).getBody();
+    }
+
+    public boolean powerOffMachine(String systemId) {
+        return powerOffMachine(systemId, "hard");
+    }
+
+    public boolean powerOffMachine(String systemId, String stopMode) {
+        return powerOffMachine(systemId, stopMode, null);
+    }
+
+    public boolean powerOffMachine(String systemId, String stopMode, String comment) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("system_id", systemId);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        if (stopMode != null && !stopMode.isEmpty()) {
+            parts.add("stopMode", stopMode);
+        }
+        if (comment != null && !comment.isEmpty()) {
+            parts.add("comment", comment);
+        }
+        ResponseEntity response = restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=power_off", parts, args);
+        return !RestClientErrorHandler.hasError(response.getStatusCode());
+    }
+
+    public boolean powerOnMachine(String systemId) {
+        return powerOnMachine(systemId, null);
+    }
+
+    // Missing 'user_data' parameter that provides metadata access from the new machine
+    public boolean powerOnMachine(String systemId, String comment) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("system_id", systemId);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        if (comment != null && !comment.isEmpty()) {
+            parts.add("comment", comment);
+        }
+        ResponseEntity response = restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=power_on", parts, args);
+        return !RestClientErrorHandler.hasError(response.getStatusCode());
     }
 
     private boolean checkCredentials(String token) {
