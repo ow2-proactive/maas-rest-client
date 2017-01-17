@@ -123,7 +123,7 @@ public class Machine {
     @JsonProperty("special_filesystems")
     private String[] specialFilesystems;
     @JsonProperty("boot_interface")
-    private BootInterface bootInterface;
+    private Interface bootInterface;
 
     public Machine(Builder builder) {
         architecture = builder.architecture;

@@ -34,6 +34,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
 import org.ow2.proactive.connector.maas.data.MaasVersion;
@@ -100,6 +101,17 @@ public class MaasClient {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
         return restClient.getRequestWithArgs(Machine.class, "/machines/{system_id}/", args).getBody();
+    }
+
+    public Machine getMachineByName(String hostName) {
+        List<Machine> machines = getMachines();
+        if (machines != null && machines.size() > 0) {
+            Optional<Machine> machineFound = machines.stream()
+                    .filter(machine -> machine.getHostname().equals(hostName))
+                    .findAny();
+            return machineFound.orElse(null);
+        }
+        return null;
     }
 
     public Machine createMachine(Machine.Builder machineBuilder) {
