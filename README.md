@@ -72,6 +72,9 @@ List<Machine> machines = maasClient.getMachines();
 
 // Retrieve a specific machine with id "xyz"
 Machine machine = maasClient.getMachineById("xyz");
+
+// Retrieve a specific machine with hostname "nodeX"
+Machine machine = maasClient.getMachineByName("nodeX");
 ```
 
 ### Manipulate machines
@@ -112,19 +115,23 @@ Machine machine = maasClient.createMachine(new Machine.Builder()
 );
 ```
 
-#### Allocate, Commission, Deploy, and Release a machine
+When the machine is created, MAAS automatically starts to commission it.
+This operation can last a few minutes.
+The new machine can be then allocated (fast operation) and finally deployed (OS installation).
+
+#### Commission, Allocate, Deploy, and Release a machine
 
 ```java
 Machine machine;
+
+// Commission
+machine = maasClient.commissionMachine("xyz");
 
 // Allocate
 machine = maasClient.allocateMachineById("xyz");
 
 // Deploy with a specific comment
-machine = maasClient.deployMachine("xyz", null, null, "Unnecessary re-deployment");
-
-// Commission
-machine = maasClient.commissionMachine("xyz");
+machine = maasClient.deployMachine("xyz", null, null, "Deployment from MAAS Java REST client");
 
 // Release
 if (!maasClient.releaseMachineById("xyz")) {
@@ -149,7 +156,7 @@ script = maasClient.postCommissioningScript(scriptData.getBytes()), "testScript.
 script = maasClient.postCommissioningScript("/path/to/existing/script");
 ```
 
-#### Get the list of existing scripts and retrieve content
+#### Get the list of existing scripts and retrieve them
 
 ```java
 // Retrieve first the name of the scripts
