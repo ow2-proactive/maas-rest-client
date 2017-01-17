@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
+import org.ow2.proactive.connector.maas.data.MaasVersion;
 import org.ow2.proactive.connector.maas.data.Machine;
 import org.ow2.proactive.connector.maas.oauth.OauthClientConfig;
 import org.ow2.proactive.connector.maas.rest.RestClient;
@@ -77,6 +78,10 @@ public class MaasClient {
         if (!tryToConnect()) {
             throw new RemoteConnectFailureException("Remote authentication failure", new Throwable("Wrong API key content"));
         }
+    }
+
+    public MaasVersion getMaasVersion() {
+        return restClient.getRequest(MaasVersion.class, "/version/").getBody();
     }
 
     public String getMaasConfig(String configName) {

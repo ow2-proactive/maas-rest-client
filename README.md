@@ -34,7 +34,7 @@ Therefore, using the API key is the only way to consume the API for now (we are 
 
 *Note:* To avoid internal blocking calls we do not delay error handling to Spring RestTemplate.
 Errors are only shown through logging mechanism.
-Therefore, returned objects must always be null-checked to see if everything went fine.
+Therefore, returned objects should always be null-checked to see if everything went fine.
 
 
 #### Connect to a local maas server providing self-signed certificate:
@@ -53,6 +53,14 @@ MaasClient maasClient = new MaasClient(
 String maasName = maasClient.getConfig("maas_name");
 System.out.println(maasName);
 ```
+
+#### Print the full MAAS version
+
+```java
+MaasVersion maasVersion = maasClient.getMaasVersion();
+System.out.println(maasVersion.getVersion() + "/" + maasVersion.getSubversion());
+```
+
 
 #### Retrieve machines informations
 
@@ -92,13 +100,13 @@ maasClient.powerOnMachine(xyz, "Automatic power on by Java REST Client");
 ```java
 // Create a new machine using Virsh power type (testing purpose)
 Machine machine = maasClient.createMachine(new Machine.Builder()
-    .hostName("test")
+    .hostName("testVM")
     .macAddress("54:52:00:11:22:33")
     .architecture("amd64")
     .subArchitecture("generic")
     .powerType(VirshPowerType.builder()
-            .powerAddress("qemu://system")
-            .powerId("test")
+            .powerAddress("qemu:///system")
+            .powerId("testVM")
             .build()
     )
 );

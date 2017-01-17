@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
+import org.ow2.proactive.connector.maas.data.MaasVersion;
 import org.ow2.proactive.connector.maas.data.Machine;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
@@ -121,6 +122,7 @@ public class RestClient {
 
     private void populateManagedTypes() {
         typesManaged = new HashMap<>();
+        typesManaged.put(MaasVersion.class, new ParameterizedTypeReference<MaasVersion>(){});
         typesManaged.put(String.class, new ParameterizedTypeReference<String>(){});
         typesManaged.put(String[].class, new ParameterizedTypeReference<String[]>(){});
         typesManaged.put(Machine.class, new ParameterizedTypeReference<Machine>(){});
