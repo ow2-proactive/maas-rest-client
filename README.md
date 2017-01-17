@@ -7,7 +7,7 @@ We use the RestTemplate from Spring framework to consume the API.
 Responses are received in JSON format.
 To retrieve and transfert content from MAAS API, we mainly use POJOs (Plain Old Java Objects) which are automatically encoded/decoded by Spring.
 
-Some features are missing (such as Nodes management for example) due to lack of usage. Nevertheless, new methods can be easyly implemented into `MaasClient.java` following the numerous examples provided. 
+Some features are missing (such as Nodes/Networks/Zones management for instance) due to lack of usage. Nevertheless, new methods can be easily implemented into `MaasClient.java` following numerous examples provided. 
 
 ## Get API Key
 
