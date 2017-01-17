@@ -35,40 +35,15 @@ import lombok.ToString;
 
 /**
  * @author ActiveEon Team
- * @since 10/01/17
+ * @since 17/01/17
  */
 @Getter(AccessLevel.PUBLIC)
 @ToString
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Interface {
-
-    @JsonProperty("effective_mtu")
-    private Long effectiveMtu;
-    @JsonProperty("resource_uri")
-    private String resourceUri;
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("parents")
-    private Object[] parents;
-    @JsonProperty("discovered")
-    private DiscoveredInterface[] discovered;
-    @JsonProperty("type")
-    private String type;
-    @JsonProperty("tags")
-    private String[] tags;
-    @JsonProperty("params")
-    private String params;
-    @JsonProperty("links")
-    private Link[] links;
-    @JsonProperty("children")
-    private Object[] children;
-    @JsonProperty("vlan")
-    private Vlan vlan;
-    @JsonProperty("id")
-    private Long id;
-    @JsonProperty("mac_address")
-    private String macAddress;
-    @JsonProperty("enabled")
-    private Boolean enabled;
+public class DiscoveredInterface {
+    @JsonProperty("ip_address")
+    private String ipAddress;
+    @JsonProperty("subnet")
+    private Subnet subnet;
 }

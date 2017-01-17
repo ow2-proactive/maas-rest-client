@@ -49,6 +49,10 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Machine {
 
+    public static final int DEPLOYED=6;
+    public static final int READY=4;
+    public static final int ALLOCATED=10;
+
     @JsonProperty("blockdevice_set")
     private BlockDevice[] blockDeviceSet;
     @JsonProperty("domain")
