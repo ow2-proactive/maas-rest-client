@@ -42,7 +42,7 @@ Therefore, returned objects must always be null-checked to see if everything wen
 ```java
 MaasClient maasClient = new MaasClient(
         "https://192.168.X.Y/MAAS/api/2.0",
-        "xxxxxxxxxxxxxxxxxx:yyyyyyyyyyyyyyyyyy:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        "xxxxxxxxxxxxxxxxxx:yyyyyyyyyyyyyyyyyy:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
         true
 );
 ```
@@ -96,7 +96,7 @@ Machine machine = maasClient.createMachine(new Machine.Builder()
     .macAddress("54:52:00:11:22:33")
     .architecture("amd64")
     .subArchitecture("generic")
-    .powerType(new VirshPowerType.Builder()
+    .powerType(VirshPowerType.builder()
             .powerAddress("qemu://system")
             .powerId("test")
             .build()
