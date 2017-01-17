@@ -73,7 +73,7 @@ public class MaasClient {
         RestTemplate restTemplate = new OauthClientConfig().restTemplate(consumerKey, "", accessKey, accessSecret, ignoreHttpsCert);
         restClient= new RestClient(restTemplate, apiUrl);
 
-        // Try to retrieve maas_name config parameter
+        // Try to retrieve a config option
         if (!tryToConnect()) {
             throw new RemoteConnectFailureException("Remote authentication failure", new Throwable("Wrong API key content"));
         }
@@ -181,6 +181,16 @@ public class MaasClient {
     }
 
     public Machine commissionMachine(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("system_id", systemId);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("enable_ssh", enableSSH);
+        parts.add("skip_networking", skipNetworking);
+        parts.add("skip_storage", skipStorage);
+        return (Machine)restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
+    }
+
+    public Machine _commissionMachineBase64(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
 
