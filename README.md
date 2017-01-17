@@ -32,7 +32,7 @@ Therefore, using the API key is the only way to consume the API for now (we are 
 
 ### Get started
 
-*Note:* To avoid internal blocking calls we do not delay error handling to Spring RestTemplate.
+*Note:* To avoid internal blocking errors, we do not delegate HTTP error handling to Spring RestTemplate.
 Errors are only shown through logging mechanism.
 Therefore, returned objects should always be null-checked to see if everything went fine.
 
