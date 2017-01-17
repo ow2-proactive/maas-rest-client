@@ -36,12 +36,12 @@ import org.ow2.proactive.connector.maas.MaasClient;
  * @author ActiveEon Team
  * @since 17/01/17
  */
-public class PollingService {
+public class MaasClientPollingService {
 
     MaasClient maasClient;
     ExecutorService executor;
 
-    public PollingService(MaasClient maasClient, int nbThreads) {
+    public MaasClientPollingService(MaasClient maasClient, int nbThreads) {
         this.maasClient = maasClient;
         executor = Executors.newFixedThreadPool(nbThreads);
     }
