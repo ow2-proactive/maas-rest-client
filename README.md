@@ -116,8 +116,9 @@ Machine machine = maasClient.createMachine(new Machine.Builder()
 ```
 
 When the machine is created, MAAS automatically starts to commission it.
-This operation can last a few minutes.
-The new machine can be then allocated (fast operation) and finally deployed (OS installation).
+This operation can last a few minutes (6 minutes needed to commission a Virsh machine having 8GB disk).
+The new machine must be then allocated (fast operation) and finally deployed (OS installation, 8 minutes needed to deploy an Ubuntu 16.04 LTS).
+If deployment is busy waiting for VM to boot, then you need to power Off/On the machine before deploying the OS.
 
 #### Commission, Allocate, Deploy, and Release a machine
 
