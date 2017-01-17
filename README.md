@@ -93,7 +93,7 @@ if (!maasClient.powerOffMachine("xyz", "soft")) {
 ...
 
 // Boot the machine with a specific comment
-maasClient.powerOnMachine("xyz", "Automatic power on by Java REST Client");
+maasClient.powerOnMachine("xyz", "Automatically power on by Java Rest client");
 ```
 
 #### Create a new machine
