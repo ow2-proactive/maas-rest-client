@@ -47,6 +47,8 @@ public class BlockDevice {
     private Long size;
     @JsonProperty("partition")
     private Partition partition;
+    @JsonProperty("partitions")
+    private Partition[] partitions;
     @JsonProperty("filesystem")
     private FileSystem fileSystem;
     @JsonProperty("partition_table_type")

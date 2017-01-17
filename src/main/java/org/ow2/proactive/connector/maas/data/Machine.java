@@ -27,7 +27,6 @@ package org.ow2.proactive.connector.maas.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ow2.proactive.connector.maas.data.powertype.PowerType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -113,7 +112,7 @@ public class Machine {
     @JsonProperty("ip_addresses")
     private String[] ipAddresses;
     @JsonProperty("owner_data")
-    private Map ownerData;
+    private Object ownerData;
     @JsonProperty("memory")
     private Long memory;
     @JsonProperty("status")
@@ -121,7 +120,7 @@ public class Machine {
     @JsonProperty("power_type")
     private String powerType;
     @JsonProperty("special_filesystems")
-    private String[] specialFilesystems;
+    private Object[] specialFilesystems;
     @JsonProperty("boot_interface")
     private Interface bootInterface;
 
