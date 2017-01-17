@@ -88,11 +88,19 @@ public class MaasClient {
     }
 
     public List<Machine> getMachines() {
-        ResponseEntity response = restClient.getRequest(Machine[].class, "/machines/");
+        ResponseEntity<Machine[]> response = restClient.getRequest(Machine[].class, "/machines/");
         if (RestClientErrorHandler.hasError(response.getStatusCode())) {
             return null;
         }
-        return Arrays.asList(restClient.getRequest(Machine[].class, "/machines/").getBody());
+        return Arrays.asList(response.getBody());
+    }
+
+    public List<Machine> getAllocatedMachines() {
+        ResponseEntity<Machine[]> response = restClient.getRequest(Machine[].class, "/machines/?op=list_allocated");
+        if (RestClientErrorHandler.hasError(response.getStatusCode())) {
+            return null;
+        }
+        return Arrays.asList(response.getBody());
     }
 
     public Machine getMachineById(String systemId) {
