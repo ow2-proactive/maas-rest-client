@@ -27,25 +27,28 @@ package org.ow2.proactive.connector.maas.data.powertype;
 
 import org.springframework.util.LinkedMultiValueMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author ActiveEon Team
  * @since 11/01/17
  */
+@Builder
+@ToString
 @Getter(AccessLevel.PUBLIC)
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VirshPowerType implements PowerType {
 
     private final String powerAddress;
     private final String powerId;
     private final String password;
-
-    public VirshPowerType(Builder builder) {
-        powerAddress = builder.powerAddress;
-        powerId = builder.powerId;
-        password = builder.password;
-    }
 
     public LinkedMultiValueMap<String, Object> getMap() {
         LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
@@ -64,38 +67,5 @@ public class VirshPowerType implements PowerType {
     @Override
     public String getType() {
         return PowerType.VIRSH;
-    }
-
-    public static class Builder {
-
-        private String powerAddress;
-        private String powerId;
-        private String password;
-
-        public Builder(String id, String address) {
-            this.powerId = id;
-            this.powerAddress = address;
-        }
-
-        public Builder() {}
-
-        public Builder powerAddress(String address) {
-            this.powerAddress = address;
-            return this;
-        }
-
-        public Builder powerId(String id) {
-            this.powerId = id;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public VirshPowerType build() {
-            return new VirshPowerType(this);
-        }
     }
 }

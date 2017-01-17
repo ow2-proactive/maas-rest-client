@@ -27,14 +27,23 @@ package org.ow2.proactive.connector.maas.data.powertype;
 
 import org.springframework.util.LinkedMultiValueMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author ActiveEon Team
  * @since 11/01/17
  */
+@Builder
+@ToString
 @Getter(AccessLevel.PUBLIC)
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IpmiPowerType implements PowerType {
 
     private String powerDriver;
@@ -42,14 +51,6 @@ public class IpmiPowerType implements PowerType {
     private String powerUser;
     private String powerPass;
     private String macAddress;
-
-    public IpmiPowerType(Builder builder) {
-        powerDriver = builder.powerDriver;
-        powerAddress = builder.powerAddress;
-        powerUser = builder.powerUser;
-        powerPass = builder.powerPass;
-        macAddress = builder.macAddress;
-    }
 
     public LinkedMultiValueMap<String, Object> getMap() {
         LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
@@ -74,45 +75,5 @@ public class IpmiPowerType implements PowerType {
     @Override
     public String getType() {
         return PowerType.IPMI;
-    }
-
-    public static class Builder {
-
-        private String powerDriver;
-        private String powerAddress;
-        private String powerUser;
-        private String powerPass;
-        private String macAddress;
-
-        public Builder() {}
-
-        public Builder powerDriver(String powerDriver) {
-            this.powerDriver = powerDriver;
-            return this;
-        }
-
-        public Builder powerAddress(String powerAddress) {
-            this.powerAddress = powerAddress;
-            return this;
-        }
-
-        public Builder powerUser(String powerUser) {
-            this.powerUser = powerUser;
-            return this;
-        }
-
-        public Builder powerPass(String powerPass) {
-            this.powerPass = powerPass;
-            return this;
-        }
-
-        public Builder macAddress(String macAddress) {
-            this.macAddress = macAddress;
-            return this;
-        }
-
-        public IpmiPowerType build() {
-            return new IpmiPowerType(this);
-        }
     }
 }

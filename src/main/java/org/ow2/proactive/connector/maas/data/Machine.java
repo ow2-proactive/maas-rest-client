@@ -145,17 +145,19 @@ public class Machine {
         private String architecture;
         private String minHweKernel;
         private String subArchitecture;
-        private List<String> macAddresses = new ArrayList<>();
+        private List<String> macAddresses;
         private String hostName;
         private Domain domain;
         private PowerType powerType;
 
         public Builder() {
+            macAddresses = new ArrayList<>();
         }
 
         public Builder(String architecture, String macAddress) {
-            this.architecture = architecture;
+            this.macAddresses = new ArrayList<>();
             this.macAddresses.add(macAddress);
+            this.architecture = architecture;
         }
 
         public Builder architecture(String architecture) {
