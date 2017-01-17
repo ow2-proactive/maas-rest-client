@@ -128,9 +128,24 @@ public class MaasClient {
     }
 
     public boolean releaseMachineById(String systemId) {
+        return releaseMachineById(systemId, null, false, false, false);
+    }
+
+    public boolean releaseMachineById(String systemId, String comment) {
+        return releaseMachineById(systemId, comment, false, false, false);
+    }
+
+    public boolean releaseMachineById(String systemId, String comment, boolean eraseDisk, boolean secureErase, boolean quickErase) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("system_id", systemId);
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.put("machines", Collections.singletonList(systemId));
-        ResponseEntity response = restClient.postRequest(String[].class, "/machines/?op=release", parts);
+        if (comment != null && !comment.isEmpty()) {
+            parts.add("comment", comment);
+        }
+        parts.add("erase", eraseDisk);
+        parts.add("secure_erase", secureErase);
+        parts.add("quick_erase", quickErase);
+        ResponseEntity response = restClient.postRequestWithArgs(String[].class, "/machines/{system_id}/?op=release", parts, args);
         return !RestClientErrorHandler.hasError(response.getStatusCode()) && response.getBody().equals(systemId);
     }
 
