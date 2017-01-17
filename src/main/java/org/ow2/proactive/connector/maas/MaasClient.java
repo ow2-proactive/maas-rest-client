@@ -31,10 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
 import org.ow2.proactive.connector.maas.data.MaasVersion;
@@ -104,14 +102,15 @@ public class MaasClient {
     }
 
     public Machine getMachineByName(String hostName) {
-        List<Machine> machines = getMachines();
-        if (machines != null && machines.size() > 0) {
-            Optional<Machine> machineFound = machines.stream()
-                    .filter(machine -> machine.getHostname().equals(hostName))
-                    .findAny();
-            return machineFound.orElse(null);
+        ResponseEntity<Machine[]> response = restClient.getRequest(Machine[].class, "/machines/?hostname=" + hostName);
+        if (response.getBody() != null && response.getBody().length > 0) {
+            return response.getBody()[0];
         }
         return null;
+    }
+
+    public Machine getMachineByMacAddress(String macAddress) {
+        return restClient.getRequest(Machine.class, "/machines/?mac_address=" + macAddress).getBody();
     }
 
     public Machine createMachine(Machine.Builder machineBuilder) {
