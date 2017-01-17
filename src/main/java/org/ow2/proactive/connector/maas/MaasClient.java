@@ -119,7 +119,7 @@ public class MaasClient {
 
     public List<String> releaseMachines(String... systemIds) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.put("machines", Arrays.asList(systemIds));
+        parts.add("machines", Arrays.asList(systemIds));
         ResponseEntity response = restClient.postRequest(String[].class, "/machines/?op=release", parts);
         if (RestClientErrorHandler.hasError(response.getStatusCode())) {
             return null;
