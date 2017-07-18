@@ -36,8 +36,8 @@ import org.ow2.proactive.connector.maas.data.Machine;
  */
 public class DeploymentPolling implements Callable<String> {
 
-    // Poll every 5 sec
-    private final int POLLING_INTERVAL=5;
+    // Poll every X sec
+    private static final int POLLING_INTERVAL=5 * 60 * 1000;
     private MaasClient maasClient;
     private String systemId;
 
@@ -51,12 +51,12 @@ public class DeploymentPolling implements Callable<String> {
 
         // Commission the new machine
         maasClient.commissionMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL * 60 * 1000);}
+        do {Thread.sleep(POLLING_INTERVAL);}
         while (maasClient.getMachineById(systemId).getStatus() != Machine.READY);
 
         // Deployment
         maasClient.deployMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL * 60 * 1000);}
+        do {Thread.sleep(POLLING_INTERVAL);}
         while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
 
         return "OK";

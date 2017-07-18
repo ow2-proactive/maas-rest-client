@@ -26,9 +26,10 @@
 package org.ow2.proactive.connector.maas.polling;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.ow2.proactive.connector.maas.MaasClient;
 
@@ -38,17 +39,28 @@ import org.ow2.proactive.connector.maas.MaasClient;
  */
 public class MaasClientPollingService {
 
+    private final static int TIMEOUT=15;
+
     MaasClient maasClient;
-    ExecutorService executor;
+    ScheduledExecutorService executor;
 
     public MaasClientPollingService(MaasClient maasClient, int nbThreads) {
         this.maasClient = maasClient;
-        executor = Executors.newFixedThreadPool(nbThreads);
+        executor = Executors.newScheduledThreadPool(nbThreads);
     }
 
     public Future<String> deployMachine(String systemId) {
+        return deployMachine(systemId, TIMEOUT);
+    }
+
+    public Future<String> deployMachine(String systemId, int timeoutMinutes) {
         Callable<String> deploymentPolling = new DeploymentPolling(maasClient, systemId);
         Future<String> future = executor.submit(deploymentPolling);
+        executor.schedule(() -> {
+            if (!future.isDone()) {
+                future.cancel(true);
+            }
+        }, timeoutMinutes, TimeUnit.MINUTES);
         return future;
     }
 
