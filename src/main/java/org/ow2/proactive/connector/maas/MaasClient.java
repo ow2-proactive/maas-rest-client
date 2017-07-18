@@ -219,6 +219,21 @@ public class MaasClient {
         return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
     }
 
+    public Machine allocateMachineByResource(int cpu_count, int mem, String arch) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("cpu_count", cpu_count);
+        parts.add("mem", mem);
+        parts.add("arch", arch);
+        return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+    }
+
+    public Machine allocateMachineByResource(int cpu_count, int mem) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("cpu_count", cpu_count);
+        parts.add("mem", mem);
+        return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+    }
+
     public Machine commissionMachine(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
