@@ -289,15 +289,30 @@ public class MaasClient {
         return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
     }
 
-    public Machine deployMachine(String systemId) {
-        return deployMachine(systemId, null, null, null);
+    public Machine deployMachine(String systemId, String userData) {
+        return deployMachine(systemId, userData, null, null, null);
     }
 
-    // Missing 'user_data' parameter that provides metadata access from the new deployed machine
-    public Machine deployMachine(String systemId, String distroSeries, String hweKernel, String comment) {
+    public Machine deployMachine(String systemId) {
+        return deployMachine(systemId, null, null, null, null);
+    }
+
+    public Machine deployMachine(String systemId, String userData, String distroSeries, String hweKernel, String comment) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
+
+        /* Strangely, these extra - multi part - headers are not necessary to embed base64 encoded content
+        HttpHeaders partHeaders = new HttpHeaders();
+        partHeaders.setContentType(MediaType.TEXT_PLAIN);
+        partHeaders.set("Content-Transfer-Encoding", "base64");
+        partHeaders.set("MIME-Version", "1.0");
+        partHeaders.set("Content-Disposition", "form-data; name=\"user_data\"");
+        partHeaders.set("Charset", "utf-8");*/
+
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        if (userData != null && !userData.isEmpty()) {
+            parts.add("user_data", encodeToBase64(userData));
+        }
         if (distroSeries != null && !distroSeries.isEmpty()) {
             parts.add("distro_series", distroSeries);
         }
