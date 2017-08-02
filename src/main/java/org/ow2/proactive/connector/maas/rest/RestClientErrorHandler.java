@@ -41,6 +41,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.UnknownHttpStatusCodeException;
 
+
 /**
  * @author ActiveEon Team
  * @since 12/01/17
@@ -48,7 +49,6 @@ import org.springframework.web.client.UnknownHttpStatusCodeException;
 public class RestClientErrorHandler implements ResponseErrorHandler {
 
     private final Logger logger = Logger.getLogger(RestClientErrorHandler.class);
-
 
     /**
      * Delegates to {@link #hasError(HttpStatus)} with the response status code.
@@ -62,10 +62,12 @@ public class RestClientErrorHandler implements ResponseErrorHandler {
         HttpStatus statusCode;
         try {
             statusCode = response.getStatusCode();
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             throw new UnknownHttpStatusCodeException(response.getRawStatusCode(),
-                    response.getStatusText(), response.getHeaders(), getResponseBody(response), getCharset(response));
+                                                     response.getStatusText(),
+                                                     response.getHeaders(),
+                                                     getResponseBody(response),
+                                                     getCharset(response));
         }
         return statusCode;
     }
@@ -95,25 +97,28 @@ public class RestClientErrorHandler implements ResponseErrorHandler {
         HttpStatus statusCode = getHttpStatusCode(response);
 
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append("Error: ").append(statusCode)
-                .append(". Details: ")
-                //.append("Headers: ").append(response.getHeaders()).append(", ")
-                .append(new String(getResponseBody(response))).append(", ");
-                //.append("Charset: ").append(getCharset(response));
+        errorMessage.append("Error: ")
+                    .append(statusCode)
+                    .append(". Details: ")
+                    //.append("Headers: ").append(response.getHeaders()).append(", ")
+                    .append(new String(getResponseBody(response)))
+                    .append(", ");
+        //.append("Charset: ").append(getCharset(response));
         logger.error(errorMessage.toString());
 
-        /* Original code: throw precise exception from status code
-        switch (statusCode.series()) {
-            case CLIENT_ERROR:
-                throw new HttpClientErrorException(statusCode, response.getStatusText(),
-                        response.getHeaders(), getResponseBody(response), getCharset(response));
-            case SERVER_ERROR:
-                throw new HttpServerErrorException(statusCode, response.getStatusText(),
-                        response.getHeaders(), getResponseBody(response), getCharset(response));
-            default:
-                throw new RestClientException("Unknown status code [" + statusCode + "]");
-        }
-        */
+        /*
+         * Original code: throw precise exception from status code
+         * switch (statusCode.series()) {
+         * case CLIENT_ERROR:
+         * throw new HttpClientErrorException(statusCode, response.getStatusText(),
+         * response.getHeaders(), getResponseBody(response), getCharset(response));
+         * case SERVER_ERROR:
+         * throw new HttpServerErrorException(statusCode, response.getStatusText(),
+         * response.getHeaders(), getResponseBody(response), getCharset(response));
+         * default:
+         * throw new RestClientException("Unknown status code [" + statusCode + "]");
+         * }
+         */
     }
 
     private byte[] getResponseBody(ClientHttpResponse response) {
@@ -122,8 +127,7 @@ public class RestClientErrorHandler implements ResponseErrorHandler {
             if (responseBody != null) {
                 return FileCopyUtils.copyToByteArray(responseBody);
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             // ignore
         }
         return new byte[0];

@@ -36,6 +36,7 @@ import java.util.TreeMap;
 
 import org.springframework.util.MultiValueMap;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -83,13 +84,12 @@ class TreeMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable {
     }
 
     public Map<K, V> toSingleValueMap() {
-        LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<K,V>(this.targetMap.size());
+        LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<K, V>(this.targetMap.size());
         for (Entry<K, List<V>> entry : targetMap.entrySet()) {
             singleValueMap.put(entry.getKey(), entry.getValue().get(0));
         }
         return singleValueMap;
     }
-
 
     // Map implementation
 
@@ -141,7 +141,6 @@ class TreeMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable {
         return this.targetMap.entrySet();
     }
 
-
     @Override
     public boolean equals(Object obj) {
         return this.targetMap.equals(obj);
@@ -158,4 +157,3 @@ class TreeMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable {
     }
 
 }
-

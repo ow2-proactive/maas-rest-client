@@ -32,5 +32,6 @@ package org.ow2.proactive.connector.maas;
 //@EnableAsync
 public class MaasClientApp {
 
-    public static void main(String args[]) {}
+    public static void main(String args[]) {
+    }
 }

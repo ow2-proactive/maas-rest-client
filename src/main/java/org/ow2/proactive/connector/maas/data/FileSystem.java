@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,12 +46,16 @@ public class FileSystem {
 
     @JsonProperty("uuid")
     private String uuid;
+
     @JsonProperty("mount_options")
     private String mountOptions;
+
     @JsonProperty("fstype")
     private String fsType;
+
     @JsonProperty("label")
     private String label;
+
     @JsonProperty("mount_point")
     private String mountPoint;
 }

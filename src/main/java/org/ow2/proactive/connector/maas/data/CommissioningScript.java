@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 12/01/17
@@ -45,8 +46,10 @@ public class CommissioningScript {
 
     @JsonProperty("content")
     private String content;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("name")
     private String name;
 }

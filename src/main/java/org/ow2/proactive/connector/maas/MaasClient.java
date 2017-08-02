@@ -51,6 +51,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+
 /**
  * @author Vincent Kherbache
  * @since 09/01/17
@@ -71,12 +72,17 @@ public class MaasClient {
         String consumerKey = tokenParts[0];
         String accessKey = tokenParts[1];
         String accessSecret = tokenParts[2];
-        RestTemplate restTemplate = new OauthClientConfig().restTemplate(consumerKey, "", accessKey, accessSecret, ignoreHttpsCert);
-        restClient= new RestClient(restTemplate, apiUrl);
+        RestTemplate restTemplate = new OauthClientConfig().restTemplate(consumerKey,
+                                                                         "",
+                                                                         accessKey,
+                                                                         accessSecret,
+                                                                         ignoreHttpsCert);
+        restClient = new RestClient(restTemplate, apiUrl);
 
         // Try to retrieve a config option
         if (!tryToConnect()) {
-            throw new RemoteConnectFailureException("Remote authentication failure", new Throwable("Wrong API key content"));
+            throw new RemoteConnectFailureException("Remote authentication failure",
+                                                    new Throwable("Wrong API key content"));
         }
     }
 
@@ -100,7 +106,9 @@ public class MaasClient {
         HashMap<String, String> args = new HashMap<>();
         args.put("name", tagName);
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        ResponseEntity<Machine[]> response = restClient.getRequestWithArgs(Machine[].class, "/tags/{name}/?op=machines", args);
+        ResponseEntity<Machine[]> response = restClient.getRequestWithArgs(Machine[].class,
+                                                                           "/tags/{name}/?op=machines",
+                                                                           args);
         if (RestClientErrorHandler.hasError(response.getStatusCode())) {
             return null;
         }
@@ -155,7 +163,7 @@ public class MaasClient {
         if (RestClientErrorHandler.hasError(response.getStatusCode())) {
             return null;
         }
-        return Arrays.asList((String[])response.getBody());
+        return Arrays.asList((String[]) response.getBody());
     }
 
     public boolean releaseMachineById(String systemId) {
@@ -166,7 +174,8 @@ public class MaasClient {
         return releaseMachineById(systemId, comment, false, false, false);
     }
 
-    public boolean releaseMachineById(String systemId, String comment, boolean eraseDisk, boolean secureErase, boolean quickErase) {
+    public boolean releaseMachineById(String systemId, String comment, boolean eraseDisk, boolean secureErase,
+            boolean quickErase) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
@@ -176,7 +185,10 @@ public class MaasClient {
         parts.add("erase", eraseDisk);
         parts.add("secure_erase", secureErase);
         parts.add("quick_erase", quickErase);
-        ResponseEntity response = restClient.postRequestWithArgs(String[].class, "/machines/{system_id}/?op=release", parts, args);
+        ResponseEntity response = restClient.postRequestWithArgs(String[].class,
+                                                                 "/machines/{system_id}/?op=release",
+                                                                 parts,
+                                                                 args);
         return !RestClientErrorHandler.hasError(response.getStatusCode()) && response.getBody().equals(systemId);
     }
 
@@ -212,9 +224,9 @@ public class MaasClient {
 
         HttpHeaders dataHeaders = new HttpHeaders();
         dataHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(new ByteArrayResource(data){
+        HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(new ByteArrayResource(data) {
             @Override
-            public String getFilename(){
+            public String getFilename() {
                 return name;
             }
         }, dataHeaders);
@@ -255,8 +267,7 @@ public class MaasClient {
         parts.add("mem", mem);
         try {
             return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
-        }
-        catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             return null;
             //e.printStackTrace();
         }
@@ -269,10 +280,12 @@ public class MaasClient {
         parts.add("enable_ssh", enableSSH);
         parts.add("skip_networking", skipNetworking);
         parts.add("skip_storage", skipStorage);
-        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
+        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args)
+                         .getBody();
     }
 
-    public Machine _commissionMachineBase64(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
+    public Machine _commissionMachineBase64(String systemId, boolean enableSSH, boolean skipNetworking,
+            boolean skipStorage) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
 
@@ -286,7 +299,8 @@ public class MaasClient {
         parts.add("skip_networking", new HttpEntity<>(encodeToBase64(skipNetworking), partHeaders));
         parts.add("skip_storage", new HttpEntity<>(encodeToBase64(skipStorage), partHeaders));
 
-        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
+        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args)
+                         .getBody();
     }
 
     public Machine deployMachine(String systemId, String userData) {
@@ -297,17 +311,21 @@ public class MaasClient {
         return deployMachine(systemId, null, null, null, null);
     }
 
-    public Machine deployMachine(String systemId, String userData, String distroSeries, String hweKernel, String comment) {
+    public Machine deployMachine(String systemId, String userData, String distroSeries, String hweKernel,
+            String comment) {
         HashMap<String, String> args = new HashMap<>();
         args.put("system_id", systemId);
 
-        /* Strangely, these extra - multi part - headers are not necessary to embed base64 encoded content
-        HttpHeaders partHeaders = new HttpHeaders();
-        partHeaders.setContentType(MediaType.TEXT_PLAIN);
-        partHeaders.set("Content-Transfer-Encoding", "base64");
-        partHeaders.set("MIME-Version", "1.0");
-        partHeaders.set("Content-Disposition", "form-data; name=\"user_data\"");
-        partHeaders.set("Charset", "utf-8");*/
+        /*
+         * Strangely, these extra - multi part - headers are not necessary to embed base64 encoded
+         * content
+         * HttpHeaders partHeaders = new HttpHeaders();
+         * partHeaders.setContentType(MediaType.TEXT_PLAIN);
+         * partHeaders.set("Content-Transfer-Encoding", "base64");
+         * partHeaders.set("MIME-Version", "1.0");
+         * partHeaders.set("Content-Disposition", "form-data; name=\"user_data\"");
+         * partHeaders.set("Charset", "utf-8");
+         */
 
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
         if (userData != null && !userData.isEmpty()) {
@@ -344,7 +362,10 @@ public class MaasClient {
         if (comment != null && !comment.isEmpty()) {
             parts.add("comment", comment);
         }
-        ResponseEntity response = restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=power_off", parts, args);
+        ResponseEntity response = restClient.postRequestWithArgs(Machine.class,
+                                                                 "/machines/{system_id}/?op=power_off",
+                                                                 parts,
+                                                                 args);
         return !RestClientErrorHandler.hasError(response.getStatusCode());
     }
 
@@ -360,7 +381,10 @@ public class MaasClient {
         if (comment != null && !comment.isEmpty()) {
             parts.add("comment", comment);
         }
-        ResponseEntity response = restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=power_on", parts, args);
+        ResponseEntity response = restClient.postRequestWithArgs(Machine.class,
+                                                                 "/machines/{system_id}/?op=power_on",
+                                                                 parts,
+                                                                 args);
         return !RestClientErrorHandler.hasError(response.getStatusCode());
     }
 
@@ -400,7 +424,10 @@ public class MaasClient {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
         parts.add("add", systemId);
         Arrays.stream(systemIds).forEach(additionalSystemId -> parts.add("add", additionalSystemId));
-        ResponseEntity response = restClient.postRequestWithArgs(String.class, "/tags/{name}/?op=update_nodes", parts, args);
+        ResponseEntity response = restClient.postRequestWithArgs(String.class,
+                                                                 "/tags/{name}/?op=update_nodes",
+                                                                 parts,
+                                                                 args);
         return !RestClientErrorHandler.hasError(response.getStatusCode());
     }
 

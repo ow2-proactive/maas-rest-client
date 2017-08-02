@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,40 +46,58 @@ public class BlockDevice {
 
     @JsonProperty("size")
     private Long size;
+
     @JsonProperty("partition")
     private Partition partition;
+
     @JsonProperty("partitions")
     private Partition[] partitions;
+
     @JsonProperty("filesystem")
     private FileSystem fileSystem;
+
     @JsonProperty("partition_table_type")
     private String partitionTableType;
+
     @JsonProperty("path")
     private String path;
+
     @JsonProperty("used_for")
     private String usedFor;
+
     @JsonProperty("block_size")
     private Long blockSize;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("model")
     private String model;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("type")
     private String type;
+
     @JsonProperty("tags")
     private String[] tags;
+
     @JsonProperty("serial")
     private String serial;
+
     @JsonProperty("uuid")
     private String uuid;
+
     @JsonProperty("id")
     private Long id;
+
     @JsonProperty("id_path")
     private String idPath;
+
     @JsonProperty("used_size")
     private Long usedSize;
+
     @JsonProperty("available_size")
     private Long availableSize;
 }

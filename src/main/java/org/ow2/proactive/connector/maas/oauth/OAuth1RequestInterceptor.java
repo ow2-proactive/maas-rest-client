@@ -32,6 +32,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+
 /**
  * ClientHttpRequestInterceptor implementation that performs OAuth1 request signing before a request for a protected resource is executed.
  *
@@ -54,7 +55,8 @@ public class OAuth1RequestInterceptor implements ClientHttpRequestInterceptor {
      * Creates an OAuth 1.0 protected resource request interceptor.
      * @param accessToken the access token and secret
      */
-    public OAuth1RequestInterceptor(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret) {
+    public OAuth1RequestInterceptor(String consumerKey, String consumerSecret, String accessToken,
+            String accessTokenSecret) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.accessToken = accessToken;
@@ -62,7 +64,8 @@ public class OAuth1RequestInterceptor implements ClientHttpRequestInterceptor {
         this.signingUtils = new SigningSupport();
     }
 
-    public ClientHttpResponse intercept(final HttpRequest request, final byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
+            ClientHttpRequestExecution execution) throws IOException {
         HttpRequest protectedResourceRequest = new HttpRequestDecorator(request);
         protectedResourceRequest.getHeaders().add("Authorization", getAuthorizationHeaderValue(request, body));
         return execution.execute(protectedResourceRequest, body);
@@ -71,7 +74,12 @@ public class OAuth1RequestInterceptor implements ClientHttpRequestInterceptor {
     // internal helpers
 
     private String getAuthorizationHeaderValue(HttpRequest request, byte[] body) {
-        return signingUtils.buildAuthorizationHeaderValue(request, body, consumerKey, consumerSecret, accessToken, accessTokenSecret);
+        return signingUtils.buildAuthorizationHeaderValue(request,
+                                                          body,
+                                                          consumerKey,
+                                                          consumerSecret,
+                                                          accessToken,
+                                                          accessTokenSecret);
     }
 
 }

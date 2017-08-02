@@ -51,6 +51,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -63,18 +64,27 @@ class SigningSupport {
      * Builds the authorization header.
      * The elements in additionalParameters are expected to not be encoded.
      */
-    public String buildAuthorizationHeaderValue(HttpMethod method, URI targetUrl, Map<String, String> oauthParameters, MultiValueMap<String, String> additionalParameters, String consumerSecret, String tokenSecret) {
+    public String buildAuthorizationHeaderValue(HttpMethod method, URI targetUrl, Map<String, String> oauthParameters,
+            MultiValueMap<String, String> additionalParameters, String consumerSecret, String tokenSecret) {
         StringBuilder header = new StringBuilder();
         header.append("OAuth ");
         for (Entry<String, String> entry : oauthParameters.entrySet()) {
-            header.append(oauthEncode(entry.getKey())).append("=\"").append(oauthEncode(entry.getValue())).append("\", ");
+            header.append(oauthEncode(entry.getKey()))
+                  .append("=\"")
+                  .append(oauthEncode(entry.getValue()))
+                  .append("\", ");
         }
-        MultiValueMap<String, String> collectedParameters = new LinkedMultiValueMap<String, String>((int) ((oauthParameters.size() + additionalParameters.size()) / .75 + 1));
+        MultiValueMap<String, String> collectedParameters = new LinkedMultiValueMap<String, String>((int) ((oauthParameters.size() +
+                                                                                                            additionalParameters.size()) /
+                                                                                                           .75 + 1));
         collectedParameters.setAll(oauthParameters);
         collectedParameters.putAll(additionalParameters);
         //String baseString = buildBaseString(method, getBaseStringUri(targetUrl), collectedParameters);
         StringBuilder signature = new StringBuilder().append(consumerSecret).append('&').append(tokenSecret);
-        header.append(oauthEncode("oauth_signature")).append("=\"").append(oauthEncode(signature.toString())).append("\"");
+        header.append(oauthEncode("oauth_signature"))
+              .append("=\"")
+              .append(oauthEncode(signature.toString()))
+              .append("\"");
         return header.toString();
     }
 
@@ -82,11 +92,20 @@ class SigningSupport {
      * Builds an authorization header from a request.
      * Expects that the request's query parameters are form-encoded.
      */
-    public String buildAuthorizationHeaderValue(HttpRequest request, byte[] body, String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret) {
+    public String buildAuthorizationHeaderValue(HttpRequest request, byte[] body, String consumerKey,
+            String consumerSecret, String accessToken, String accessTokenSecret) {
         Map<String, String> oauthParameters = commonOAuthParameters(consumerKey);
         oauthParameters.put("oauth_token", accessToken);
-        MultiValueMap<String, String> additionalParameters = union(readFormParameters(request.getHeaders().getContentType(), body), parseFormParameters(request.getURI().getRawQuery()));
-        return buildAuthorizationHeaderValue(request.getMethod(), request.getURI(), oauthParameters, additionalParameters, consumerSecret, accessTokenSecret);
+        MultiValueMap<String, String> additionalParameters = union(readFormParameters(request.getHeaders()
+                                                                                             .getContentType(),
+                                                                                      body),
+                                                                   parseFormParameters(request.getURI().getRawQuery()));
+        return buildAuthorizationHeaderValue(request.getMethod(),
+                                             request.getURI(),
+                                             oauthParameters,
+                                             additionalParameters,
+                                             consumerSecret,
+                                             accessTokenSecret);
     }
 
     /**
@@ -94,11 +113,20 @@ class SigningSupport {
      * Expects that the request's query parameters are form-encoded.
      * This method is a Spring 3.0-compatible version of buildAuthorizationHeaderValue(); planned for removal in Spring Social 1.1
      */
-    public String spring30buildAuthorizationHeaderValue(ClientHttpRequest request, byte[] body, String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret) {
+    public String spring30buildAuthorizationHeaderValue(ClientHttpRequest request, byte[] body, String consumerKey,
+            String consumerSecret, String accessToken, String accessTokenSecret) {
         Map<String, String> oauthParameters = commonOAuthParameters(consumerKey);
         oauthParameters.put("oauth_token", accessToken);
-        MultiValueMap<String, String> additionalParameters = union(readFormParameters(request.getHeaders().getContentType(), body), parseFormParameters(request.getURI().getRawQuery()));
-        return buildAuthorizationHeaderValue(request.getMethod(), request.getURI(), oauthParameters, additionalParameters, consumerSecret, accessTokenSecret);
+        MultiValueMap<String, String> additionalParameters = union(readFormParameters(request.getHeaders()
+                                                                                             .getContentType(),
+                                                                                      body),
+                                                                   parseFormParameters(request.getURI().getRawQuery()));
+        return buildAuthorizationHeaderValue(request.getMethod(),
+                                             request.getURI(),
+                                             oauthParameters,
+                                             additionalParameters,
+                                             consumerSecret,
+                                             accessTokenSecret);
     }
 
     Map<String, String> commonOAuthParameters(String consumerKey) {
@@ -154,7 +182,8 @@ class SigningSupport {
     private String normalizeParameters(MultiValueMap<String, String> collectedParameters) {
         // Normalizes the collected parameters for baseString calculation, per http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
         MultiValueMap<String, String> sortedEncodedParameters = new TreeMultiValueMap<String, String>();
-        for (Iterator<Entry<String, List<String>>> entryIt = collectedParameters.entrySet().iterator(); entryIt.hasNext();) {
+        for (Iterator<Entry<String, List<String>>> entryIt = collectedParameters.entrySet()
+                                                                                .iterator(); entryIt.hasNext();) {
             Entry<String, List<String>> entry = entryIt.next();
             String collectedName = entry.getKey();
             List<String> collectedValues = entry.getValue();
@@ -167,7 +196,8 @@ class SigningSupport {
             Collections.sort(encodedValues);
         }
         StringBuilder paramsBuilder = new StringBuilder();
-        for (Iterator<Entry<String, List<String>>> entryIt = sortedEncodedParameters.entrySet().iterator(); entryIt.hasNext();) {
+        for (Iterator<Entry<String, List<String>>> entryIt = sortedEncodedParameters.entrySet()
+                                                                                    .iterator(); entryIt.hasNext();) {
             Entry<String, List<String>> entry = entryIt.next();
             String name = entry.getKey();
             List<String> values = entry.getValue();
@@ -204,8 +234,7 @@ class SigningSupport {
             int idx = pair.indexOf('=');
             if (idx == -1) {
                 result.add(formDecode(pair), "");
-            }
-            else {
+            } else {
                 String name = formDecode(pair.substring(0, idx));
                 String value = formDecode(pair.substring(idx + 1));
                 result.add(name, value);
@@ -224,7 +253,8 @@ class SigningSupport {
     }
 
     // can't use putAll here because it will overwrite anything that has the same key in both maps
-    private MultiValueMap<String, String> union(MultiValueMap<String, String> map1, MultiValueMap<String, String> map2) {
+    private MultiValueMap<String, String> union(MultiValueMap<String, String> map1,
+            MultiValueMap<String, String> map2) {
         MultiValueMap<String, String> union = new LinkedMultiValueMap<String, String>(map1);
         Set<Entry<String, List<String>>> map2Entries = map2.entrySet();
         for (Iterator<Entry<String, List<String>>> entryIt = map2Entries.iterator(); entryIt.hasNext();) {
@@ -239,7 +269,8 @@ class SigningSupport {
     }
 
     private int getPort(URI uri) {
-        if (uri.getScheme().equals("http") && uri.getPort() == 80 || uri.getScheme().equals("https") && uri.getPort() == 443) {
+        if (uri.getScheme().equals("http") && uri.getPort() == 80 ||
+            uri.getScheme().equals("https") && uri.getPort() == 443) {
             return -1;
         } else {
             return uri.getPort();
@@ -290,8 +321,7 @@ class SigningSupport {
             }
             if (notEncoded.get(b)) {
                 bos.write(b);
-            }
-            else {
+            } else {
                 bos.write('%');
                 char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
                 char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
@@ -311,6 +341,7 @@ class SigningSupport {
     }
 
     private static final String HMAC_SHA1_SIGNATURE_NAME = "HMAC-SHA1";
+
     private static final String PLAINTEXT_SIGNATURE_NAME = "PLAINTEXT";
 
     private static final String HMAC_SHA1_MAC_NAME = "HmacSHA1";

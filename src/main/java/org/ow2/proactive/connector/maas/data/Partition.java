@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,20 +46,28 @@ public class Partition {
 
     @JsonProperty("uuid")
     private String uuid;
+
     @JsonProperty("size")
     private Long size;
+
     @JsonProperty("filesystem")
     private FileSystem fileSystem;
+
     @JsonProperty("path")
     private String path;
+
     @JsonProperty("used_for")
     private String usedFor;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("bootable")
     private Boolean bootable;
+
     @JsonProperty("type")
     private String type;
+
     @JsonProperty("id")
     private Long id;
 }

@@ -44,6 +44,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+
 /**
  * @author ActiveEon Team
  * @since 11/01/17
@@ -51,8 +52,11 @@ import org.springframework.web.client.RestTemplate;
 public class RestClient {
 
     private HashMap<Class, ParameterizedTypeReference> typesManaged;
+
     private RestTemplate restTemplate;
+
     private HttpHeaders headers;
+
     private String apiUrl;
 
     public RestClient(RestTemplate restTemplate, String apiUrl) {
@@ -72,29 +76,43 @@ public class RestClient {
     public <T> ResponseEntity<T> deleteRequestWithArgs(Class<T> valueType, String resourceUrl, HashMap args) {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
-            return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.DELETE, httpEntity, typesManaged.get(valueType), args);
-        } catch(RestClientException e) {
+            return restTemplate.exchange(apiUrl + resourceUrl,
+                                         HttpMethod.DELETE,
+                                         httpEntity,
+                                         typesManaged.get(valueType),
+                                         args);
+        } catch (RestClientException e) {
             //return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
             return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
-    public <T> ResponseEntity<T> postRequest(Class<T> valueType, String resourceUrl, MultiValueMap<String, Object> parts) {
+    public <T> ResponseEntity<T> postRequest(Class<T> valueType, String resourceUrl,
+            MultiValueMap<String, Object> parts) {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, headers);
         try {
-            return  restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType));
-        } catch(RestClientException e) {
+            return restTemplate.exchange(apiUrl + resourceUrl,
+                                         HttpMethod.POST,
+                                         httpEntity,
+                                         typesManaged.get(valueType));
+        } catch (RestClientException e) {
             return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
-    public <T> ResponseEntity<T> postRequestWithArgs(Class<T> valueType, String resourceUrl, MultiValueMap<String, Object> parts, HashMap args) {
+    public <T> ResponseEntity<T> postRequestWithArgs(Class<T> valueType, String resourceUrl,
+            MultiValueMap<String, Object> parts, HashMap args) {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(parts, headers);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(parts,
+                                                                                                             headers);
         try {
-            return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType), args);
-        } catch(RestClientException e) {
+            return restTemplate.exchange(apiUrl + resourceUrl,
+                                         HttpMethod.POST,
+                                         httpEntity,
+                                         typesManaged.get(valueType),
+                                         args);
+        } catch (RestClientException e) {
             return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
@@ -103,7 +121,7 @@ public class RestClient {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType));
-        } catch(RestClientException e) {
+        } catch (RestClientException e) {
             return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
@@ -111,8 +129,12 @@ public class RestClient {
     public <T> ResponseEntity<T> getRequestWithArgs(Class<T> valueType, String resourceUrl, HashMap args) {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
-            return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType), args);
-        } catch(RestClientException e) {
+            return restTemplate.exchange(apiUrl + resourceUrl,
+                                         HttpMethod.GET,
+                                         httpEntity,
+                                         typesManaged.get(valueType),
+                                         args);
+        } catch (RestClientException e) {
             return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
@@ -124,14 +146,23 @@ public class RestClient {
 
     private void populateManagedTypes() {
         typesManaged = new HashMap<>();
-        typesManaged.put(MaasVersion.class, new ParameterizedTypeReference<MaasVersion>(){});
-        typesManaged.put(String.class, new ParameterizedTypeReference<String>(){});
-        typesManaged.put(String[].class, new ParameterizedTypeReference<String[]>(){});
-        typesManaged.put(Machine.class, new ParameterizedTypeReference<Machine>(){});
-        typesManaged.put(Machine[].class, new ParameterizedTypeReference<Machine[]>(){});
-        typesManaged.put(Tag.class, new ParameterizedTypeReference<Tag>(){});
-        typesManaged.put(Tag[].class, new ParameterizedTypeReference<Tag[]>(){});
-        typesManaged.put(CommissioningScript.class, new ParameterizedTypeReference<CommissioningScript>(){});
-        typesManaged.put(ByteArrayResource.class, new ParameterizedTypeReference<ByteArrayResource>(){});
+        typesManaged.put(MaasVersion.class, new ParameterizedTypeReference<MaasVersion>() {
+        });
+        typesManaged.put(String.class, new ParameterizedTypeReference<String>() {
+        });
+        typesManaged.put(String[].class, new ParameterizedTypeReference<String[]>() {
+        });
+        typesManaged.put(Machine.class, new ParameterizedTypeReference<Machine>() {
+        });
+        typesManaged.put(Machine[].class, new ParameterizedTypeReference<Machine[]>() {
+        });
+        typesManaged.put(Tag.class, new ParameterizedTypeReference<Tag>() {
+        });
+        typesManaged.put(Tag[].class, new ParameterizedTypeReference<Tag[]>() {
+        });
+        typesManaged.put(CommissioningScript.class, new ParameterizedTypeReference<CommissioningScript>() {
+        });
+        typesManaged.put(ByteArrayResource.class, new ParameterizedTypeReference<ByteArrayResource>() {
+        });
     }
 }

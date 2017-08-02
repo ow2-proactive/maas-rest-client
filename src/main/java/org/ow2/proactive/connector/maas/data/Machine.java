@@ -39,6 +39,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -49,83 +50,122 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Machine {
 
-    public static final int READY=4;
-    public static final int DEPLOYED=6;
-    public static final int DEPLOYING=9;
-    public static final int ALLOCATED=10;
+    public static final int READY = 4;
+
+    public static final int DEPLOYED = 6;
+
+    public static final int DEPLOYING = 9;
+
+    public static final int ALLOCATED = 10;
 
     @JsonProperty("blockdevice_set")
     private BlockDevice[] blockDeviceSet;
+
     @JsonProperty("domain")
     private Domain domain;
+
     @JsonProperty("cpu_count")
     private Long cpuCount;
+
     @JsonProperty("tag_names")
     private String[] tagNames;
+
     @JsonProperty("status_name")
     private String statusName;
+
     @JsonProperty("zone")
     private Zone zone;
+
     @JsonProperty("owner")
     private String owner;
+
     @JsonProperty("swap_size")
     private String swapSize;
+
     @JsonProperty("hwe_kernel")
     private String hweKernel;
+
     @JsonProperty("disable_ipv4")
     private Boolean disableIpv4;
+
     @JsonProperty("interface_set")
     private Interface[] interfaceSet;
+
     @JsonProperty("status_action")
     private String statusAction;
+
     @JsonProperty("fqdn")
     private String fqdn;
+
     @JsonProperty("node_type_name")
     private String nodeTypeName;
+
     @JsonProperty("power_state")
     private String powerState;
+
     @JsonProperty("node_type")
     private Long nodeType;
+
     @JsonProperty("status_message")
     private String statusMessage;
+
     @JsonProperty("min_hwe_kernel")
     private String minHweKernel;
+
     @JsonProperty("physicalblockdevice_set")
     private BlockDevice[] physicalBlockDeviceSet;
+
     @JsonProperty("netboot")
     private Boolean netboot;
+
     @JsonProperty("virtualblockdevice_set")
     private BlockDevice[] virtualBlockDeviceSet;
+
     @JsonProperty("system_id")
     private String systemId;
+
     @JsonProperty("distro_series")
     private String distroSeries;
+
     @JsonProperty("hostname")
     private String hostname;
+
     @JsonProperty("address_ttl")
     private String addressTtl;
+
     @JsonProperty("storage")
     private Double storage;
+
     @JsonProperty("architecture")
     private String architecture;
+
     @JsonProperty("osystem")
     private String osSystem;
+
     @JsonProperty("boot_disk")
     private Object bootDisk;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("ip_addresses")
     private String[] ipAddresses;
+
     @JsonProperty("owner_data")
     private Object ownerData;
+
     @JsonProperty("memory")
     private Long memory;
+
     @JsonProperty("status")
     private Long status;
+
     @JsonProperty("power_type")
     private String powerType;
+
     @JsonProperty("special_filesystems")
     private Object[] specialFilesystems;
+
     @JsonProperty("boot_interface")
     private Interface bootInterface;
 
@@ -138,8 +178,12 @@ public class Machine {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) { return false; }
-        if (!Machine.class.isAssignableFrom(obj.getClass())) { return false; }
+        if (obj == null) {
+            return false;
+        }
+        if (!Machine.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
         final Machine other = (Machine) obj;
         return this.systemId.equals(other.systemId);
     }
@@ -147,11 +191,17 @@ public class Machine {
     public static class Builder {
 
         private String architecture;
+
         private String minHweKernel;
+
         private String subArchitecture;
+
         private List<String> macAddresses;
+
         private String hostName;
+
         private Domain domain;
+
         private PowerType powerType;
 
         public Builder() {

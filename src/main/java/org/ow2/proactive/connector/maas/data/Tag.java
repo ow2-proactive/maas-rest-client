@@ -34,6 +34,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 31/07/17
@@ -48,12 +49,16 @@ public class Tag {
 
     @JsonProperty("definition")
     private String definition;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("comment")
     private String comment;
+
     @JsonProperty("kernel_opts")
     private String kernelOpts;
 }

@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,22 +46,31 @@ public class Vlan {
 
     @JsonProperty("fabric")
     private String fabric;
+
     @JsonProperty("external_dhcp")
     private String externalDhcp;
+
     @JsonProperty("vid")
     private Long vid;
+
     @JsonProperty("dhcp_on")
     private Boolean dhcpOn;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("secondary_rack")
     private String secondaryRack;
+
     @JsonProperty("primary_rack")
     private String primaryRack;
+
     @JsonProperty("mtu")
     private Long mtu;
+
     @JsonProperty("id")
     private Long id;
 }

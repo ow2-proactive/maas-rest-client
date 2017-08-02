@@ -35,6 +35,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 11/01/17
@@ -47,7 +48,9 @@ import lombok.ToString;
 public class VirshPowerType implements PowerType {
 
     private final String powerAddress;
+
     private final String powerId;
+
     private final String password;
 
     public LinkedMultiValueMap<String, Object> getMap() {

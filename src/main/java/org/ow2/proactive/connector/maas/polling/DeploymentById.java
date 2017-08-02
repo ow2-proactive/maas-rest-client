@@ -32,6 +32,7 @@ import org.ow2.proactive.connector.maas.MaasClient;
 import org.ow2.proactive.connector.maas.data.Machine;
 import org.ow2.proactive.connector.maas.data.Tag;
 
+
 /**
  * @author ActiveEon Team
  * @since 17/01/17
@@ -39,8 +40,11 @@ import org.ow2.proactive.connector.maas.data.Tag;
 public class DeploymentById implements Callable<Machine> {
 
     private MaasClient maasClient;
+
     private String systemId;
+
     private String userData;
+
     private List<Tag> tags;
 
     public DeploymentById(MaasClient maasClient, String systemId, String userData, List<Tag> tags) {
@@ -58,8 +62,9 @@ public class DeploymentById implements Callable<Machine> {
         if (selectedMachine == null) {
             return null;
         }
-        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL); }
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
+        do {
+            Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);
+        } while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
 
         // Put tags
         tags.forEach(tag -> {
@@ -72,8 +77,9 @@ public class DeploymentById implements Callable<Machine> {
         if (selectedMachine == null) {
             return null;
         }
-        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);}
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
+        do {
+            Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);
+        } while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
 
         return selectedMachine;
     }

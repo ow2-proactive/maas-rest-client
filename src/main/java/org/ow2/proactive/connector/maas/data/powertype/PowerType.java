@@ -27,19 +27,22 @@ package org.ow2.proactive.connector.maas.data.powertype;
 
 import org.springframework.util.LinkedMultiValueMap;
 
+
 /**
  * @author ActiveEon Team
  * @since 11/01/17
  */
 public interface PowerType {
 
-    static final String VIRSH="virsh";
-    static final String IPMI="ipmi";
+    static final String VIRSH = "virsh";
+
+    static final String IPMI = "ipmi";
 
     static String getArgLabel(String argName) {
         return "power_parameters_" + argName;
     }
 
     String getType();
+
     public LinkedMultiValueMap<String, Object> getMap();
 }

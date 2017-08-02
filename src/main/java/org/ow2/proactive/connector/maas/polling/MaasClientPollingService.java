@@ -36,6 +36,7 @@ import org.ow2.proactive.connector.maas.MaasClient;
 import org.ow2.proactive.connector.maas.data.Machine;
 import org.ow2.proactive.connector.maas.data.Tag;
 
+
 /**
  * @author ActiveEon Team
  * @since 17/01/17
@@ -43,9 +44,11 @@ import org.ow2.proactive.connector.maas.data.Tag;
 public class MaasClientPollingService {
 
     private final static int DEFAULT_TIMEOUT = 15;
+
     final static int POLLING_INTERVAL = 5 * 1000;
 
     private MaasClient maasClient;
+
     private ScheduledExecutorService executor;
 
     public MaasClientPollingService(MaasClient maasClient, int nbThreads) {
@@ -78,7 +81,8 @@ public class MaasClientPollingService {
         return deployMachineByResources(cpu, ram, userData, tags, DEFAULT_TIMEOUT);
     }
 
-    public Future<Machine> deployMachineByResources(int cpu, int ram, String userData, List<Tag> tags, int timeoutMinutes) {
+    public Future<Machine> deployMachineByResources(int cpu, int ram, String userData, List<Tag> tags,
+            int timeoutMinutes) {
         Callable<Machine> deploymentPolling = new DeploymentByResources(maasClient, cpu, ram, userData, tags);
 
         Future<Machine> future = executor.submit(deploymentPolling);

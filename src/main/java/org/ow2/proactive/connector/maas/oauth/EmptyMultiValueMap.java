@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.springframework.util.MultiValueMap;
 
+
 class EmptyMultiValueMap<K, V> implements MultiValueMap<K, V> {
 
     private static final MultiValueMap<Object, Object> INSTANCE = new EmptyMultiValueMap<Object, Object>();
@@ -122,7 +123,6 @@ class EmptyMultiValueMap<K, V> implements MultiValueMap<K, V> {
         return this.targetMap.entrySet();
     }
 
-
     @Override
     public boolean equals(Object obj) {
         return this.targetMap.equals(obj);
@@ -137,6 +137,5 @@ class EmptyMultiValueMap<K, V> implements MultiValueMap<K, V> {
     public String toString() {
         return this.targetMap.toString();
     }
-
 
 }

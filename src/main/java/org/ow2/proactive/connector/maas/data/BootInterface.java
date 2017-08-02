@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,30 +46,43 @@ public class BootInterface {
 
     @JsonProperty("effective_mtu")
     private Long effectiveMtu;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("parents")
     private Object[] parents;
+
     @JsonProperty("discovered")
     private String[] discovered;
+
     @JsonProperty("type")
     private String type;
+
     @JsonProperty("tags")
     private String[] tags;
+
     @JsonProperty("params")
     private String params;
+
     @JsonProperty("links")
     private Link[] links;
+
     @JsonProperty("children")
     private Object[] children;
+
     @JsonProperty("vlan")
     private Vlan vlan;
+
     @JsonProperty("id")
     private Long id;
+
     @JsonProperty("mac_address")
     private String macAddress;
+
     @JsonProperty("enabled")
     private Boolean enabled;
 }

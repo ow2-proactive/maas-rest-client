@@ -35,6 +35,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 11/01/17
@@ -47,9 +48,13 @@ import lombok.ToString;
 public class IpmiPowerType implements PowerType {
 
     private String powerDriver;
+
     private String powerAddress;
+
     private String powerUser;
+
     private String powerPass;
+
     private String macAddress;
 
     public LinkedMultiValueMap<String, Object> getMap() {

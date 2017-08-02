@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,14 +46,19 @@ public class Domain {
 
     @JsonProperty("ttl")
     private String ttl;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("resource_record_count")
     private Long ResourceRecordCount;
+
     @JsonProperty("authoritative")
     private Boolean authoritative;
+
     @JsonProperty("id")
     private Long id;
 }

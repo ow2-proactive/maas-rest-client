@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,8 +46,10 @@ public class Link {
 
     @JsonProperty("subnet")
     private Subnet subnet;
+
     @JsonProperty("mode")
     private String mode;
+
     @JsonProperty("id")
     private Long id;
 }

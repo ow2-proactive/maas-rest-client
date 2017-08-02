@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 10/01/17
@@ -45,24 +46,34 @@ public class Subnet {
 
     @JsonProperty("active_discovery")
     private Boolean activeDiscovery;
+
     @JsonProperty("space")
     private String space;
+
     @JsonProperty("rdns_mode")
     private Long rdnsMode;
+
     @JsonProperty("id")
     private Long id;
+
     @JsonProperty("gateway_ip")
     private String gatewayIp;
+
     @JsonProperty("vlan")
     private Vlan vlan;
+
     @JsonProperty("allow_proxy")
     private Boolean allowProxy;
+
     @JsonProperty("resource_uri")
     private String resourceUri;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("cidr")
     private String cidr;
+
     @JsonProperty("dns_servers")
     private String[] dnsServers;
 }

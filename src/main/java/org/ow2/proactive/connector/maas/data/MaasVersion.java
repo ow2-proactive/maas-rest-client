@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
  * @author ActiveEon Team
  * @since 17/01/17
@@ -45,8 +46,10 @@ public class MaasVersion {
 
     @JsonProperty("version")
     private String version;
+
     @JsonProperty("subversion")
     private String subversion;
+
     @JsonProperty("capabilities")
     private String[] capabilities;
 }
