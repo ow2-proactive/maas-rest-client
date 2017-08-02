@@ -414,6 +414,6 @@ public class MaasClient {
     }
 
     private String encodeToBase64(Object src) {
-        return Base64.getMimeEncoder().encodeToString(src.toString().getBytes());
+        return Base64.getMimeEncoder(76, "\r\n".getBytes()).encodeToString(src.toString().getBytes());
     }
 }
