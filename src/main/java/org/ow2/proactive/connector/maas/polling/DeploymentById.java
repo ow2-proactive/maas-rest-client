@@ -25,40 +25,56 @@
  */
 package org.ow2.proactive.connector.maas.polling;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.ow2.proactive.connector.maas.MaasClient;
 import org.ow2.proactive.connector.maas.data.Machine;
+import org.ow2.proactive.connector.maas.data.Tag;
 
 /**
  * @author ActiveEon Team
  * @since 17/01/17
  */
-public class DeploymentPolling implements Callable<String> {
+public class DeploymentById implements Callable<Machine> {
 
-    // Poll every X sec
-    private static final int POLLING_INTERVAL=5 * 60 * 1000;
     private MaasClient maasClient;
     private String systemId;
+    private String userData;
+    private List<Tag> tags;
 
-    public DeploymentPolling(MaasClient maasClient, String systemId) {
+    public DeploymentById(MaasClient maasClient, String systemId, String userData, List<Tag> tags) {
         this.maasClient = maasClient;
         this.systemId = systemId;
+        this.userData = userData;
+        this.tags = tags;
     }
 
     @Override
-    public String call() throws Exception {
+    public Machine call() throws Exception {
 
-        // Commission the new machine
-        maasClient.commissionMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.READY);
+        // Acquire/Allocate the new machine
+        Machine selectedMachine = maasClient.allocateMachineById(systemId);
+        if (selectedMachine == null) {
+            return null;
+        }
+        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL); }
+        while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
 
-        // Deployment
-        maasClient.deployMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL);}
+        // Put tags
+        tags.forEach(tag -> {
+            maasClient.createTagIfNotExists(tag.getName(), tag.getComment());
+            maasClient.addTagToMachines(tag.getName(), systemId);
+        });
+
+        // Deploy OS
+        selectedMachine = maasClient.deployMachine(systemId, userData);
+        if (selectedMachine == null) {
+            return null;
+        }
+        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);}
         while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
 
-        return "OK";
+        return selectedMachine;
     }
 }

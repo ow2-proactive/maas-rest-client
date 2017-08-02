@@ -25,6 +25,7 @@
  */
 package org.ow2.proactive.connector.maas.polling;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -32,6 +33,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.ow2.proactive.connector.maas.MaasClient;
+import org.ow2.proactive.connector.maas.data.Machine;
+import org.ow2.proactive.connector.maas.data.Tag;
 
 /**
  * @author ActiveEon Team
@@ -39,32 +42,56 @@ import org.ow2.proactive.connector.maas.MaasClient;
  */
 public class MaasClientPollingService {
 
-    private final static int TIMEOUT=15;
+    private final static int DEFAULT_TIMEOUT = 15;
+    final static int POLLING_INTERVAL = 5 * 1000;
 
-    MaasClient maasClient;
-    ScheduledExecutorService executor;
+    private MaasClient maasClient;
+    private ScheduledExecutorService executor;
 
     public MaasClientPollingService(MaasClient maasClient, int nbThreads) {
         this.maasClient = maasClient;
         executor = Executors.newScheduledThreadPool(nbThreads);
     }
 
-    public Future<String> deployMachine(String systemId) {
-        return deployMachine(systemId, TIMEOUT);
+    public Future<Machine> deployMachine(String systemId, String userData, List<Tag> tags) {
+        return deployMachineById(systemId, userData, tags, DEFAULT_TIMEOUT);
     }
 
-    public Future<String> deployMachine(String systemId, int timeoutMinutes) {
-        Callable<String> deploymentPolling = new DeploymentPolling(maasClient, systemId);
-        Future<String> future = executor.submit(deploymentPolling);
+    public Future<Machine> deployMachine(int cpu, int ram, String userData, List<Tag> tags) {
+        return deployMachineByResources(cpu, ram, userData, tags, DEFAULT_TIMEOUT);
+    }
+
+    public Future<Machine> deployMachineById(String systemId, String userData, List<Tag> tags, int timeoutMinutes) {
+        Callable<Machine> deploymentPolling = new DeploymentById(maasClient, systemId, userData, tags);
+
+        Future<Machine> future = executor.submit(deploymentPolling);
         executor.schedule(() -> {
             if (!future.isDone()) {
                 future.cancel(true);
             }
         }, timeoutMinutes, TimeUnit.MINUTES);
+
+        return future;
+    }
+
+    public Future<Machine> deployMachineByResources(int cpu, int ram, String userData, List<Tag> tags) {
+        return deployMachineByResources(cpu, ram, userData, tags, DEFAULT_TIMEOUT);
+    }
+
+    public Future<Machine> deployMachineByResources(int cpu, int ram, String userData, List<Tag> tags, int timeoutMinutes) {
+        Callable<Machine> deploymentPolling = new DeploymentByResources(maasClient, cpu, ram, userData, tags);
+
+        Future<Machine> future = executor.submit(deploymentPolling);
+        executor.schedule(() -> {
+            if (!future.isDone()) {
+                future.cancel(true);
+            }
+        }, timeoutMinutes, TimeUnit.MINUTES);
+
         return future;
     }
 
     public void shutdown() {
-        executor.shutdown();
+        executor.shutdownNow();
     }
 }
