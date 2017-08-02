@@ -364,6 +364,46 @@ public class MaasClient {
         return !RestClientErrorHandler.hasError(response.getStatusCode());
     }
 
+    public List<Tag> getTags() {
+        ResponseEntity<Tag[]> response = restClient.getRequest(Tag[].class, "/tags/");
+        if (RestClientErrorHandler.hasError(response.getStatusCode())) {
+            return null;
+        }
+        return Arrays.asList(response.getBody());
+    }
+
+    public boolean createTagIfNotExists(String name, String description) {
+        if (getTags().stream().anyMatch(tag -> tag.getName().equals(name))) {
+            return false;
+        }
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("name", name);
+        if (description != null && !description.isEmpty()) {
+            parts.add("comment", description);
+        }
+        // Set kernel options as None to avoid overriding options by an empty string
+        parts.add("kernel_opts", null);
+        ResponseEntity response = restClient.postRequest(CommissioningScript.class, "/tags/", parts);
+        return !RestClientErrorHandler.hasError(response.getStatusCode());
+    }
+
+    public void updateTagNodesMapping(String name) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("name", name);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        restClient.postRequestWithArgs(String.class, "/tags/{name}/op=rebuild", parts, args);
+    }
+
+    public boolean addTagToMachines(String tagName, String systemId, String... systemIds) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("name", tagName);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("add", systemId);
+        Arrays.stream(systemIds).forEach(additionalSystemId -> parts.add("add", additionalSystemId));
+        ResponseEntity response = restClient.postRequestWithArgs(String.class, "/tags/{name}/?op=update_nodes", parts, args);
+        return !RestClientErrorHandler.hasError(response.getStatusCode());
+    }
+
     private boolean checkCredentials(String token) {
         String[] tokenParts = token.split(":");
         return tokenParts.length == 3;
