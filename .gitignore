@@ -11,3 +11,4 @@ smart-watch.iml
 *.log
 *bin/
 *.iml
+gradle/ext/
