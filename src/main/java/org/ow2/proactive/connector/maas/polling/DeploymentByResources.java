@@ -25,76 +25,56 @@
  */
 package org.ow2.proactive.connector.maas.polling;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.ow2.proactive.connector.maas.MaasClient;
 import org.ow2.proactive.connector.maas.data.Machine;
+import org.ow2.proactive.connector.maas.data.Tag;
 
 /**
  * @author ActiveEon Team
  * @since 17/01/17
  */
-public class DeploymentPolling implements Callable<Machine> {
+public class DeploymentByResources implements Callable<Machine> {
 
     // Poll every X sec
-    private static final int POLLING_INTERVAL = 5 * 1000;
     private MaasClient maasClient;
-    //private String systemId;
     private int cpu, ram;
+    private String userData;
+    private List<Tag> tags;
 
-    public DeploymentPolling(MaasClient maasClient, int cpu, int ram) { //} String systemId) {
+    public DeploymentByResources(MaasClient maasClient, int cpu, int ram, String userData, List<Tag> tags) {
         this.maasClient = maasClient;
         this.cpu = cpu;
         this.ram = ram;
-        //this.systemId = systemId;
+        this.userData = userData;
+        this.tags = tags;
     }
-
-    public String _call() throws Exception {
-
-        /* Commission the new machine
-        maasClient.commissionMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.READY);
-
-        // Acquire/Allocate the new machine
-        maasClient.allocateMachineById(systemId);
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
-
-        // Deploy OS
-        maasClient.deployMachine(systemId);
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
-        */
-
-        return "OK";
-    }
-
 
     @Override
     public Machine call() throws Exception {
 
         // Acquire/Allocate the new machine
-        Machine selectedMachine = maasClient.allocateMachineByResource(cpu, ram);
-
+        Machine selectedMachine = maasClient.allocateMachineByResources(cpu, ram);
         if (selectedMachine == null) {
             return null;
         }
+        String systemId = selectedMachine.getSystemId();
+        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL); }
+        while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
 
-        do {Thread.sleep(POLLING_INTERVAL); }
-        while (maasClient.getMachineById(selectedMachine.getSystemId()).getStatus() != Machine.ALLOCATED);
-
-        /* Acquire/Allocate the new machine
-        maasClient.allocateMachineById(selectedMachine.getSystemId());
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(selectedMachine.getSystemId()).getStatus() != Machine.ALLOCATED);
-        */
+        // Put tags
+        tags.forEach(tag -> {
+            maasClient.createTagIfNotExists(tag.getName(), tag.getComment());
+            maasClient.addTagToMachines(tag.getName(), systemId);
+        });
 
         // Deploy OS
-        /*maasClient.deployMachine(selectedMachine.getSystemId());
-        do {Thread.sleep(POLLING_INTERVAL);}
-        while (maasClient.getMachineById(selectedMachine.getSystemId()).getStatus() != Machine.DEPLOYED);
-*/
+        selectedMachine = maasClient.deployMachine(systemId, userData);
+        do {Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);}
+        while (maasClient.getMachineById(systemId).getStatus() != Machine.DEPLOYED);
+
         return selectedMachine;
     }
 }
