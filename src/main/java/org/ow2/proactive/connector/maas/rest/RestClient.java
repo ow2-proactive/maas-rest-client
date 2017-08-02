@@ -129,6 +129,8 @@ public class RestClient {
         typesManaged.put(String[].class, new ParameterizedTypeReference<String[]>(){});
         typesManaged.put(Machine.class, new ParameterizedTypeReference<Machine>(){});
         typesManaged.put(Machine[].class, new ParameterizedTypeReference<Machine[]>(){});
+        typesManaged.put(Tag.class, new ParameterizedTypeReference<Tag>(){});
+        typesManaged.put(Tag[].class, new ParameterizedTypeReference<Tag[]>(){});
         typesManaged.put(CommissioningScript.class, new ParameterizedTypeReference<CommissioningScript>(){});
         typesManaged.put(ByteArrayResource.class, new ParameterizedTypeReference<ByteArrayResource>(){});
     }
