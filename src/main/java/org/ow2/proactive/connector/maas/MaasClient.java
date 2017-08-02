@@ -37,6 +37,7 @@ import java.util.List;
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
 import org.ow2.proactive.connector.maas.data.MaasVersion;
 import org.ow2.proactive.connector.maas.data.Machine;
+import org.ow2.proactive.connector.maas.data.Tag;
 import org.ow2.proactive.connector.maas.oauth.OauthClientConfig;
 import org.ow2.proactive.connector.maas.rest.RestClient;
 import org.ow2.proactive.connector.maas.rest.RestClientErrorHandler;
@@ -93,6 +94,28 @@ public class MaasClient {
             return null;
         }
         return Arrays.asList(response.getBody());
+    }
+
+    public List<Machine> getMachinesByTagName(String tagName) {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("name", tagName);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        ResponseEntity<Machine[]> response = restClient.getRequestWithArgs(Machine[].class, "/tags/{name}/?op=machines", args);
+        if (RestClientErrorHandler.hasError(response.getStatusCode())) {
+            return null;
+        }
+        return Arrays.asList(response.getBody());
+    }
+
+    /**
+     * Retrieve the list of machines tagged with the provided tag.
+     * Note: The tag name must be unique, so there is no need to check the description field of the tag.
+     *
+     * @param tag   The tag with which the machines must be tagged
+     * @return      The list of desired tagged machines
+     */
+    public List<Machine> getMachinesByTag(Tag tag) {
+        return getMachinesByTagName(tag.getName());
     }
 
     public List<Machine> getAllocatedMachines() {
