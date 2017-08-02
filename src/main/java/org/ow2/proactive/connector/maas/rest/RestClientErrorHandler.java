@@ -94,7 +94,15 @@ public class RestClientErrorHandler implements ResponseErrorHandler {
     public void handleError(ClientHttpResponse response) throws IOException {
         HttpStatus statusCode = getHttpStatusCode(response);
 
-        /*
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append("Error: ").append(statusCode)
+                .append(". Details: ")
+                //.append("Headers: ").append(response.getHeaders()).append(", ")
+                .append(new String(getResponseBody(response))).append(", ");
+                //.append("Charset: ").append(getCharset(response));
+        logger.error(errorMessage.toString());
+
+        /* Original code: throw precise exception from status code
         switch (statusCode.series()) {
             case CLIENT_ERROR:
                 throw new HttpClientErrorException(statusCode, response.getStatusText(),
@@ -106,14 +114,6 @@ public class RestClientErrorHandler implements ResponseErrorHandler {
                 throw new RestClientException("Unknown status code [" + statusCode + "]");
         }
         */
-
-        StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append("Error ").append(statusCode)
-                .append(". Details = ")
-                //.append("Headers: ").append(response.getHeaders()).append(", ")
-                .append("Body: ").append(new String(getResponseBody(response))).append(", ")
-                .append("Charset: ").append(getCharset(response));
-        logger.error(errorMessage.toString());
     }
 
     private byte[] getResponseBody(ClientHttpResponse response) {
