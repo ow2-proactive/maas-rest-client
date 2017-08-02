@@ -31,6 +31,7 @@ import java.util.HashMap;
 import org.ow2.proactive.connector.maas.data.CommissioningScript;
 import org.ow2.proactive.connector.maas.data.MaasVersion;
 import org.ow2.proactive.connector.maas.data.Machine;
+import org.ow2.proactive.connector.maas.data.Tag;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -40,7 +41,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -72,8 +73,9 @@ public class RestClient {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.DELETE, httpEntity, typesManaged.get(valueType), args);
-        } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+        } catch(RestClientException e) {
+            //return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -82,8 +84,8 @@ public class RestClient {
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, headers);
         try {
             return  restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType));
-        } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+        } catch(RestClientException e) {
+            return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -92,8 +94,8 @@ public class RestClient {
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(parts, headers);
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.POST, httpEntity, typesManaged.get(valueType), args);
-        } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+        } catch(RestClientException e) {
+            return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -101,8 +103,8 @@ public class RestClient {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType));
-        } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+        } catch(RestClientException e) {
+            return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -110,8 +112,8 @@ public class RestClient {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", headers);
         try {
             return restTemplate.exchange(apiUrl + resourceUrl, HttpMethod.GET, httpEntity, typesManaged.get(valueType), args);
-        } catch(ResourceAccessException e) {
-            return new ResponseEntity<T>(HttpStatus.EXPECTATION_FAILED);
+        } catch(RestClientException e) {
+            return new ResponseEntity<T>((T) e.getMostSpecificCause().getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
