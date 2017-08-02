@@ -206,7 +206,6 @@ public class MaasClient {
     }
 
     public CommissioningScript postCommissioningScript(byte[] data, String name) {
-
         HttpHeaders nameHeaders = new HttpHeaders();
         nameHeaders.setContentType(MediaType.TEXT_PLAIN);
         HttpEntity<String> namePart = new HttpEntity<>(name, nameHeaders);
@@ -242,7 +241,7 @@ public class MaasClient {
         return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
     }
 
-    public Machine allocateMachineByResource(int cpu_count, int mem, String arch) {
+    public Machine allocateMachineByResources(int cpu_count, int mem, String arch) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
         parts.add("cpu_count", cpu_count);
         parts.add("mem", mem);
@@ -250,11 +249,17 @@ public class MaasClient {
         return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
     }
 
-    public Machine allocateMachineByResource(int cpu_count, int mem) {
+    public Machine allocateMachineByResources(int cpu_count, int mem) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
         parts.add("cpu_count", cpu_count);
         parts.add("mem", mem);
-        return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+        try {
+            return restClient.postRequest(Machine.class, "/machines/?op=allocate", parts).getBody();
+        }
+        catch(ClassCastException e) {
+            return null;
+            //e.printStackTrace();
+        }
     }
 
     public Machine commissionMachine(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
@@ -264,7 +269,7 @@ public class MaasClient {
         parts.add("enable_ssh", enableSSH);
         parts.add("skip_networking", skipNetworking);
         parts.add("skip_storage", skipStorage);
-        return (Machine)restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
+        return restClient.postRequestWithArgs(Machine.class, "/machines/{system_id}/?op=commission", parts, args).getBody();
     }
 
     public Machine _commissionMachineBase64(String systemId, boolean enableSSH, boolean skipNetworking, boolean skipStorage) {
