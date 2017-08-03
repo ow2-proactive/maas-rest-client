@@ -8,6 +8,9 @@ apply from: "$rootDir/gradle/ext/coding-format.gradle"
 
 def jdkHome = System.getenv("JAVA_HOME")
 
+group 'org.ow2.proactive'
+version maasRestClientVersion
+
 buildscript {
     repositories {
         maven {
@@ -29,19 +32,30 @@ buildscript {
 // Configure the maven repository deployment
 install {
     repositories.mavenInstaller {
-        // Set the version
-        pom.version = 1.0        // Set the group/namespace for the maven repository deployment.
+        pom.version = maasRestClientVersion
         pom.groupId = 'org.ow2.proactive'
     }
 }
 
 repositories {
-    //mavenLocal()
     mavenCentral()
     jcenter()
-    /*maven { url 'http://repo.spring.io/plugins-release' }*/
     maven { url "https://plugins.gradle.org/m2/" }
-    //maven { url "http://repo1.maven.org/maven2/" }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            snapshotRepository(url: "http://repository.activeeon.com/content/repositories/snapshots/") {
+                authentication(userName: "${System.getProperty('nexusUsername')}",
+                        password: "${System.getProperty('nexusPassword')}")
+            }
+            repository(url: "http://repository.activeeon.com/content/repositories/releases/") {
+                authentication(userName: "${System.getProperty('nexusUsername')}",
+                        password: "${System.getProperty('nexusPassword')}")
+            }
+        }
+    }
 }
 
 sourceSets {
