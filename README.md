@@ -1,4 +1,7 @@
 # maas-rest-client
+
+[![Build Status](http://jenkins.activeeon.com/buildStatus/icon?job=maas-rest-client)](http://jenkins.activeeon.com/job/maas-rest-client)
+
 A Java Rest client to consume MAAS (Metal As A Service) API.
 
 The API documentation can be found [here](https://maas.ubuntu.com/docs/api.html).
