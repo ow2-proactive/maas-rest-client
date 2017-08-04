@@ -48,6 +48,8 @@ public class DeploymentByResources implements Callable<Machine> {
 
     private List<Tag> tags;
 
+    private static final CharSequence INSTANCE_ID_PATTERN = "<INSTANCE_ID>";
+
     public DeploymentByResources(MaasClient maasClient, int cpu, int ram, String userData, List<Tag> tags) {
         this.maasClient = maasClient;
         this.cpu = cpu;
@@ -68,6 +70,9 @@ public class DeploymentByResources implements Callable<Machine> {
         do {
             Thread.sleep(MaasClientPollingService.POLLING_INTERVAL);
         } while (maasClient.getMachineById(systemId).getStatus() != Machine.ALLOCATED);
+
+        // Replace the connector IaaS instance ID if provided
+        userData = userData.replace(INSTANCE_ID_PATTERN, systemId);
 
         // Put tags
         tags.forEach(tag -> {
